@@ -14,7 +14,7 @@ IS_PRODUCTION = os.environ.get("IS_PRODUCTION", "").lower() == "true"
 PORT = 3000 if IS_PRODUCTION else int(os.environ.get("PORT", "3000"))
 DIST_DIR = os.path.join(os.path.dirname(__file__), "dist")
 
-TICK_RATE = 1 / 35  # 35 fps (original Doom tic rate)
+TICK_RATE = 1 / 20  # 20 fps (reduced for lower bandwidth over high-latency connections)
 
 # Binary message tags (first byte)
 TAG_VIDEO = b"\x01"
