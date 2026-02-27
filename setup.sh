@@ -4,15 +4,15 @@ set -euo pipefail
 REPO="https://github.com/CodeSignal/learn_doom-simulation.git"
 DIR="learn_doom-simulation"
 
-# Resolve latest tag
-LATEST_TAG=$(git ls-remote --tags --sort=-v:refname "$REPO" 'refs/tags/v*' \
-  | head -1 | sed 's/.*refs\/tags\///')
-echo "==> Cloning $DIR @ $LATEST_TAG"
+# Install system dependencies for ViZDoom audio (OpenAL + FluidSynth)
+if command -v apt-get &>/dev/null; then
+  echo "==> Installing system audio libraries..."
+  apt-get update -qq && apt-get install -y -qq libopenal1 libfluidsynth2 2>/dev/null || true
+fi
 
-# Clone at that tag
-git -c advice.detachedHead=false clone -q --branch "$LATEST_TAG" --depth 1 "$REPO" "$DIR"
+echo "==> Cloning $DIR"
+git -c advice.detachedHead=false clone -q --depth 1 "$REPO" "$DIR"
 cd "$DIR"
-git checkout -q -b main
 git submodule update -q --init --recursive
 
 # Ensure pip is available

@@ -22,6 +22,7 @@ export default class DoomClient {
     // FPS tracking
     this._frameCount = 0;
     this._lastFpsTime = performance.now();
+    this._frameSeq = 0;
     this.fps = 0;
 
     // Callbacks
@@ -108,12 +109,14 @@ export default class DoomClient {
   // --- Frame rendering ---
 
   _renderFrame(buffer) {
+    // Bump sequence so stale frames get dropped
+    const seq = ++this._frameSeq;
     const blob = new Blob([buffer], { type: 'image/jpeg' });
-    const url = URL.createObjectURL(blob);
-    const img = new Image();
-    img.onload = () => {
-      this.ctx.drawImage(img, 0, 0, this.canvas.width, this.canvas.height);
-      URL.revokeObjectURL(url);
+    createImageBitmap(blob).then((bmp) => {
+      // Drop if a newer frame arrived while decoding
+      if (seq !== this._frameSeq) { bmp.close(); return; }
+      this.ctx.drawImage(bmp, 0, 0, this.canvas.width, this.canvas.height);
+      bmp.close();
 
       this._frameCount++;
       const now = performance.now();
@@ -123,8 +126,7 @@ export default class DoomClient {
         this._lastFpsTime = now;
         if (this.onFpsUpdate) this.onFpsUpdate(this.fps);
       }
-    };
-    img.src = url;
+    });
   }
 
   // --- Input ---
