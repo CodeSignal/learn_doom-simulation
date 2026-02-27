@@ -146,6 +146,7 @@ class GameSession:
         self._mouse_dx: float = 0.0
         self._mouse_dy: float = 0.0
         self._mouse_held: bool = False
+        self._audio_logged: bool = False
 
     # Doom 1 scenarios use ExMy map format, but doom.cfg defaults to "map01"
     _DOOM1_SCENARIOS = {"doom.cfg", "freedoom1.cfg"}
@@ -254,8 +255,9 @@ class GameSession:
             self.game.set_audio_buffer_enabled(True)
             self.game.set_audio_sampling_rate(vzd.SamplingRate.SR_22050)
             self.game.set_audio_buffer_size(4)  # 4 tics of audio per step
-        except Exception:
-            pass
+            print("[audio] setup OK")
+        except Exception as e:
+            print(f"[audio] setup FAILED: {e}")
 
     # --- Input handling (browser play) ---
 
@@ -425,8 +427,14 @@ class GameSession:
     def _extract_audio(self, state) -> bytes | None:
         """Extract audio PCM bytes from state, or None if unavailable/silent."""
         if state is None or state.audio_buffer is None:
+            if not self._audio_logged:
+                print(f"[audio] buffer: {'no state' if state is None else 'None'}")
+                self._audio_logged = True
             return None
         ab = state.audio_buffer
+        if not self._audio_logged:
+            print(f"[audio] buffer: shape={ab.shape}, nonzero={np.count_nonzero(ab)}")
+            self._audio_logged = True
         if ab.size == 0 or np.count_nonzero(ab) == 0:
             return None
         # int16 stereo PCM, little-endian
