@@ -210,7 +210,7 @@ class GameSession:
         self.game.set_window_visible(False)
         self.game.set_mode(vzd.Mode.PLAYER)
         self.game.set_screen_format(vzd.ScreenFormat.RGB24)
-        self.game.set_screen_resolution(vzd.ScreenResolution.RES_1920X1080)
+        self.game.set_screen_resolution(vzd.ScreenResolution.RES_640X480)
 
         # Clear any buttons from config and set our own
         self.game.clear_available_buttons()
@@ -442,7 +442,7 @@ class GameSession:
                 if state and state.screen_buffer is not None:
                     jpeg = self._compress_frame(state.screen_buffer)
                 else:
-                    jpeg = self._compress_frame(np.zeros((1080, 1920, 3), dtype=np.uint8))
+                    jpeg = self._compress_frame(np.zeros((480, 640, 3), dtype=np.uint8))
                 return jpeg, self._get_state_dict(), None
 
             action = self._build_action()
@@ -452,7 +452,7 @@ class GameSession:
             if state and state.screen_buffer is not None:
                 jpeg = self._compress_frame(state.screen_buffer)
             else:
-                jpeg = self._compress_frame(np.zeros((1080, 1920, 3), dtype=np.uint8))
+                jpeg = self._compress_frame(np.zeros((480, 640, 3), dtype=np.uint8))
 
             audio = self._extract_audio(state)
 
@@ -465,7 +465,7 @@ class GameSession:
         """API-driven step: takes explicit action vector, returns (jpeg, state, reward)."""
         with self._lock:
             if self.game.is_episode_finished():
-                jpeg = self._compress_frame(np.zeros((1080, 1920, 3), dtype=np.uint8))
+                jpeg = self._compress_frame(np.zeros((480, 640, 3), dtype=np.uint8))
                 return jpeg, self._get_state_dict(), 0.0
 
             # Pad or truncate to NUM_BUTTONS
@@ -476,7 +476,7 @@ class GameSession:
             if state and state.screen_buffer is not None:
                 jpeg = self._compress_frame(state.screen_buffer)
             else:
-                jpeg = self._compress_frame(np.zeros((1080, 1920, 3), dtype=np.uint8))
+                jpeg = self._compress_frame(np.zeros((480, 640, 3), dtype=np.uint8))
 
             state_dict = self._get_state_dict()
             state_dict["last_reward"] = reward

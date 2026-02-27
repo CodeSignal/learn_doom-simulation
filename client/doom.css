@@ -26,6 +26,7 @@
   width: 100%;
   height: auto;
   max-height: calc(100vh - 42px - 40px); /* header + hud bar */
+  image-rendering: auto;
   image-rendering: pixelated;
   cursor: crosshair;
   object-fit: contain;
