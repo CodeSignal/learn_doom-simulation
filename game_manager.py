@@ -405,6 +405,7 @@ class GameSession:
             "episode_finished": finished,
             "dead": dead,
             "total_reward": self.game.get_total_reward(),
+            "current_map": self._current_map,
         }
         if self._level_total_kills is not None:
             result["total_kills"] = self._level_total_kills

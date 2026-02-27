@@ -33,6 +33,16 @@ function hideAll() {
   }
 }
 
+// --- Title management ---
+
+const DEFAULT_TITLE = 'Doom Simulation';
+
+function updateTitle(text) {
+  document.title = text;
+  const el = document.getElementById('page-title');
+  if (el) el.textContent = text;
+}
+
 // --- State transitions ---
 
 function setHudVisible(visible) {
@@ -45,6 +55,7 @@ function goToMenu() {
   gameMode = null;
   pendingCampaign = null;
   setHudVisible(true);
+  updateTitle(DEFAULT_TITLE);
   doomClient.lockVerticalMouse = false;
   if (document.pointerLockElement) document.exitPointerLock();
   doomClient.setPaused(true);
@@ -68,6 +79,7 @@ function startScenario(name) {
   uiState = 'playing';
   hideAll();
   setHudVisible(true);
+  updateTitle(name.replace('.cfg', ''));
   doomClient.lockVerticalMouse = false;
   doomClient.enableAudio();  // activate on user gesture
   doomClient.setScenario(name);
@@ -112,6 +124,11 @@ function updateHud(state) {
   if (armor) armor.textContent = `Armor: ${Math.round(state.armor)}`;
   if (ammo) ammo.textContent = `Ammo: ${Math.round(state.ammo)}`;
   if (kills) kills.textContent = `Kills: ${Math.round(state.kill_count)}`;
+
+  // Update title with current map name
+  if (state.current_map && uiState === 'playing') {
+    updateTitle(state.current_map);
+  }
 
   // Only react to episode end while actively playing
   if (uiState !== 'playing') return;
