@@ -169,14 +169,14 @@ export default class DoomClient {
       }
     });
 
-    // Flush mouse deltas at 20Hz (matched to server tick rate)
+    // Flush mouse deltas at 60Hz
     this._mouseFlushInterval = setInterval(() => {
       if (this._mouseDx !== 0 || this._mouseDy !== 0) {
         this._send({ type: 'mouse', dx: this._mouseDx, dy: this._mouseDy });
         this._mouseDx = 0;
         this._mouseDy = 0;
       }
-    }, 1000 / 20);
+    }, 1000 / 60);
 
     // Notify app.js of pointer lock changes
     document.addEventListener('pointerlockchange', () => {

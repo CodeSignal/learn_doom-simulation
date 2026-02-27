@@ -421,7 +421,7 @@ class GameSession:
         """Compress RGB screen buffer to JPEG bytes."""
         img = Image.fromarray(screen)
         buf = io.BytesIO()
-        img.save(buf, format="JPEG", quality=20)
+        img.save(buf, format="JPEG", quality=50)
         return buf.getvalue()
 
     def _extract_audio(self, state) -> bytes | None:
