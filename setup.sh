@@ -35,5 +35,6 @@ echo "==> Building client..."
 npx vite build --outDir ../dist 2>/dev/null
 
 # Start production server (single process, no proxy overhead)
+# ALSOFT_DRIVERS=null lets OpenAL render audio in headless containers without real audio hardware
 echo "==> Starting server on port 3000..."
-IS_PRODUCTION=true python3 server.py
+ALSOFT_DRIVERS=null IS_PRODUCTION=true python3 server.py
