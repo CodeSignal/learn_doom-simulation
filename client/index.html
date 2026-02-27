@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <title><!-- APP_TITLE --></title>
+  <title>ViZDoom Web Player</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <!-- Fonts (Work Sans) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,24 +22,133 @@
   <link rel="stylesheet" href="./design-system/components/tags/tags.css">
   <link rel="stylesheet" href="./design-system/components/modal/modal.css">
 
-  <!-- Template-specific components (layout, utilities, temporary components) -->
+  <!-- Template + Doom styles -->
   <link rel="stylesheet" href="./bespoke-template.css" />
-  <!-- APP_SPECIFIC_CSS -->
+  <link rel="stylesheet" href="./doom.css" />
 </head>
 <body class="bespoke">
   <!-- Navigation Header -->
   <header class="header">
-    <h1 class="heading-small">APP NAME</h1>
-    <!-- APP_SPECIFIC_HEADER_CONTENT -->
+    <h1 class="heading-small">ViZDoom Web Player</h1>
     <div class="spacer"></div>
+    <button id="btn-menu" class="button button-secondary">Menu</button>
     <button id="btn-help" class="button button-text">Help</button>
   </header>
 
-  <!-- Main Application Content -->
-  <!-- APP_SPECIFIC_MAIN_CONTENT -->
+  <!-- Game Area -->
+  <main class="game-container">
+    <div class="game-viewport">
+      <canvas id="game-canvas" width="1920" height="1080"></canvas>
+      <div class="hud-bar">
+        <span class="hud-item hud-hp" id="hud-hp" title="Health">HP: 100</span>
+        <span class="hud-item hud-armor" id="hud-armor" title="Armor">Armor: 0</span>
+        <span class="hud-item hud-ammo" id="hud-ammo" title="Ammo">Ammo: 0</span>
+        <span class="hud-item hud-kills" id="hud-kills" title="Kills">Kills: 0</span>
+        <span class="hud-item hud-fps" id="hud-fps">FPS: 0</span>
+      </div>
+    </div>
+
+    <!-- Connection error -->
+    <div id="overlay-disconnected" class="game-overlay game-overlay-disconnected">
+      <span>Server Unavailable</span>
+      <span class="disconnected-detail">Connecting...</span>
+    </div>
+
+    <!-- Main Menu -->
+    <div id="overlay-menu" class="game-overlay game-overlay-menu" style="display:none;">
+      <h2 class="menu-title">ViZDoom Web Player</h2>
+
+      <!-- Campaign buttons -->
+      <div class="menu-campaigns">
+        <button id="btn-play-doom" class="menu-campaign-btn">Play Doom</button>
+        <button id="btn-play-doom2" class="menu-campaign-btn">Play Doom 2</button>
+      </div>
+
+      <button id="btn-test-levels" class="menu-test-btn">Test Levels</button>
+    </div>
+
+    <!-- Test Levels menu (separate page) -->
+    <div id="overlay-test-menu" class="game-overlay game-overlay-menu" style="display:none;">
+      <h2 class="menu-title">Test Levels</h2>
+      <p class="menu-subtitle">Single-level testing only</p>
+      <div id="menu-scenarios" class="menu-grid"></div>
+      <button id="btn-test-back" class="menu-test-btn" style="margin-top:1.5rem;">Back</button>
+    </div>
+
+    <!-- Episode select (Doom 1 only) -->
+    <div id="overlay-episode" class="game-overlay game-overlay-menu" style="display:none;">
+      <h2 class="menu-title">Choose Episode</h2>
+      <div class="menu-episode-list">
+        <button class="menu-episode-btn" data-map="E1M1">
+          <span class="episode-number">Episode 1</span>
+          <span class="episode-name">Knee-Deep in the Dead</span>
+        </button>
+        <button class="menu-episode-btn" data-map="E2M1">
+          <span class="episode-number">Episode 2</span>
+          <span class="episode-name">The Shores of Hell</span>
+        </button>
+        <button class="menu-episode-btn" data-map="E3M1">
+          <span class="episode-number">Episode 3</span>
+          <span class="episode-name">Inferno</span>
+        </button>
+        <button class="menu-episode-btn" data-map="E4M1">
+          <span class="episode-number">Episode 4</span>
+          <span class="episode-name">Thy Flesh Consumed</span>
+        </button>
+      </div>
+      <button id="btn-episode-back" class="menu-test-btn" style="margin-top:1.5rem;">Back</button>
+    </div>
+
+    <!-- Skill select (shared by Doom 1 and Doom 2) -->
+    <div id="overlay-skill" class="game-overlay game-overlay-menu" style="display:none;">
+      <h2 class="menu-title">Choose Difficulty</h2>
+      <div class="menu-skill-list">
+        <button class="menu-skill-btn" data-skill="1">I'm too young to die</button>
+        <button class="menu-skill-btn" data-skill="2">Hey, not too rough</button>
+        <button class="menu-skill-btn" data-skill="3">Hurt me plenty</button>
+        <button class="menu-skill-btn" data-skill="4">Ultra-Violence</button>
+        <button class="menu-skill-btn" data-skill="5">Nightmare!</button>
+      </div>
+      <button id="btn-skill-back" class="menu-test-btn" style="margin-top:1.5rem;">Back</button>
+    </div>
+
+    <!-- Pause (shown immediately on Escape) -->
+    <div id="overlay-pause" class="game-overlay game-overlay-pause" style="display:none;">
+      <span>PAUSED</span>
+      <span id="pause-subtitle" class="pause-subtitle" style="visibility:hidden;">Click to Play</span>
+    </div>
+
+    <!-- Click to play (pointer lock prompt) — unused now, kept as fallback -->
+    <div id="overlay-click" class="game-overlay" style="display:none;">
+      <span>Click to Play</span>
+    </div>
+
+    <!-- Death -->
+    <div id="overlay-death" class="game-overlay game-overlay-death" style="display:none;">
+      <span>YOU DIED</span>
+      <div class="overlay-buttons">
+        <button id="btn-respawn" class="button button-primary">Restart</button>
+        <button id="btn-death-menu" class="button button-secondary">Main Menu</button>
+      </div>
+    </div>
+
+    <!-- Level complete -->
+    <div id="overlay-win" class="game-overlay game-overlay-win" style="display:none;">
+      <span>LEVEL COMPLETE</span>
+      <div class="win-stats">
+        <div class="win-stat"><span class="win-stat-label">Kills</span><span class="win-stat-value" id="stat-kills">0</span></div>
+        <div class="win-stat"><span class="win-stat-label">Items</span><span class="win-stat-value" id="stat-items">0</span></div>
+        <div class="win-stat"><span class="win-stat-label">Secrets</span><span class="win-stat-value" id="stat-secrets">0</span></div>
+      </div>
+      <div class="overlay-buttons">
+        <button id="btn-next-level" class="button button-primary">Next Level</button>
+        <button id="btn-restart-win" class="button button-secondary">Restart</button>
+        <button id="btn-win-menu" class="button button-secondary">Main Menu</button>
+      </div>
+    </div>
+  </main>
 
   <!-- Core Scripts -->
   <script type="module" src="./app.js"></script>
-  <!-- APP_SPECIFIC_SCRIPTS -->
 </body>
 </html>

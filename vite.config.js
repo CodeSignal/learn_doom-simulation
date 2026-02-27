@@ -8,7 +8,7 @@ export default defineConfig({
     allowedHosts: true,
     port: 3000,
     proxy: {
-      '/message': {
+      '/api': {
         target: 'http://localhost:3001',
         changeOrigin: true
       },
@@ -24,4 +24,3 @@ export default defineConfig({
     emptyOutDir: true
   }
 });
-

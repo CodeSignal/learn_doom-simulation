@@ -1,136 +1,118 @@
-<!-- Help Content Template for Bespoke Applications -->
-<!--
-  This template provides a consistent structure for help content across all
-  embedded applications. Customize the content while maintaining the structure.
--->
-
-<!-- Table of Contents Navigation -->
 <nav class="toc">
   <strong>Contents</strong>
   <ul>
     <li><a href="#overview">Overview</a></li>
-    <li><a href="#getting-started">Getting Started</a></li>
-    <li><a href="#features">Key Features</a></li>
-    <li><a href="#workflow">Workflow</a></li>
-    <li><a href="#shortcuts">Shortcuts</a></li>
+    <li><a href="#controls">Controls</a></li>
+    <li><a href="#api">REST API Reference</a></li>
     <li><a href="#faq">Troubleshooting / FAQ</a></li>
   </ul>
 </nav>
 
-<!-- Overview Section -->
 <section id="overview">
   <h2>Overview</h2>
-  <p>This page explains how to use the <!-- APP_NAME -->: <!-- BRIEF_DESCRIPTION -->.</p>
-  <!-- Optional: Add hero image -->
-  <!-- <img src="./img/overview.png" alt="Overview of the UI"> -->
+  <p>ViZDoom Web Player lets you play Doom directly in the browser. The game runs headlessly on the server via ViZDoom; JPEG frames are streamed to your browser over a WebSocket at ~30 fps.</p>
+  <p>You can also control the game programmatically through the REST API to build AI agents and reinforcement learning experiments.</p>
 </section>
 
-<!-- Getting Started Section -->
-<section id="getting-started">
-  <h2>Getting Started</h2>
-  <p>To begin using the <!-- APP_NAME -->:</p>
-  <ol>
-    <li>First step...</li>
-    <li>Second step...</li>
-    <li>Third step...</li>
-  </ol>
-  <!-- Optional: Add screenshot -->
-  <!-- <img src="./img/getting-started.png" alt="Getting started screenshot"> -->
-</section>
+<section id="controls">
+  <h2>Controls</h2>
+  <p>Click the game canvas to capture your mouse (Pointer Lock). Press <strong>Escape</strong> to pause and release the cursor.</p>
 
-<!-- Key Features Section -->
-<section id="features">
-  <h2>Key Features</h2>
-
-  <h3>Feature 1</h3>
-  <p>Description of feature 1 and how to use it.</p>
-
-  <h3>Feature 2</h3>
-  <p>Description of feature 2 and how to use it.</p>
-
-  <h3>Feature 3</h3>
-  <p>Description of feature 3 and how to use it.</p>
-
-  <!-- Optional: Add feature screenshots -->
-  <!-- <img src="./img/features.png" alt="Key features demonstration"> -->
-</section>
-
-<!-- Workflow Section -->
-<section id="workflow">
-  <h2>Workflow</h2>
-  <p>Here's the typical workflow for using this application:</p>
-  <ol>
-    <li><strong>Step 1:</strong> Description of first workflow step</li>
-    <li><strong>Step 2:</strong> Description of second workflow step</li>
-    <li><strong>Step 3:</strong> Description of third workflow step</li>
-    <li><strong>Step 4:</strong> Description of fourth workflow step</li>
-  </ol>
-
-  <h3>Tips & Best Practices</h3>
+  <h3>Movement</h3>
   <ul>
-    <li>Tip 1: Description of best practice</li>
-    <li>Tip 2: Description of best practice</li>
-    <li>Tip 3: Description of best practice</li>
+    <li><strong>W</strong> &mdash; Move forward</li>
+    <li><strong>S</strong> &mdash; Move backward</li>
+    <li><strong>A</strong> &mdash; Strafe left</li>
+    <li><strong>D</strong> &mdash; Strafe right</li>
+    <li><strong>Arrow Left / Right</strong> &mdash; Turn left / right</li>
+    <li><strong>Mouse</strong> &mdash; Look / turn</li>
+  </ul>
+
+  <h3>Actions</h3>
+  <ul>
+    <li><strong>Left Click</strong> &mdash; Shoot</li>
+    <li><strong>E</strong> &mdash; Use / activate (open doors, press switches)</li>
+    <li><strong>Shift</strong> &mdash; Jump</li>
+  </ul>
+
+  <h3>Weapons</h3>
+  <ul>
+    <li><strong>1</strong> &mdash; Fist / Chainsaw</li>
+    <li><strong>2</strong> &mdash; Pistol</li>
+    <li><strong>3</strong> &mdash; Shotgun / Super Shotgun</li>
+    <li><strong>4</strong> &mdash; Chaingun</li>
+    <li><strong>5</strong> &mdash; Rocket Launcher</li>
+    <li><strong>6</strong> &mdash; Plasma Rifle</li>
+    <li><strong>7</strong> &mdash; BFG 9000</li>
+  </ul>
+
+  <h3>Game</h3>
+  <ul>
+    <li><strong>Escape</strong> &mdash; Pause game and release cursor</li>
+    <li><strong>Menu button</strong> &mdash; Return to level select</li>
   </ul>
 </section>
 
-<!-- Shortcuts Section -->
-<section id="shortcuts">
-  <h2>Shortcuts</h2>
-  <ul>
-    <li><strong>ESC</strong> - Close help modal</li>
-    <li><strong>Keyboard shortcut 1</strong> - Description of what it does</li>
-    <li><strong>Keyboard shortcut 2</strong> - Description of what it does</li>
-    <li><strong>Mouse action 1</strong> - Description of what it does</li>
-    <li><strong>Mouse action 2</strong> - Description of what it does</li>
-  </ul>
+<section id="api">
+  <h2>REST API Reference</h2>
+  <p>The REST API allows programmatic control for building AI agents.</p>
+
+  <h3>POST /api/game/start</h3>
+  <p>Create a new game session.</p>
+  <pre>curl -X POST /api/game/start -H 'Content-Type: application/json' -d '{"scenario":"basic.cfg"}'</pre>
+  <p>Returns: <code>{"session_id": "..."}</code></p>
+
+  <h3>POST /api/game/{id}/action</h3>
+  <p>Send an action vector and receive the next frame + state.</p>
+  <pre>curl -X POST /api/game/{id}/action -H 'Content-Type: application/json' \
+  -d '{"actions":[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]}'</pre>
+  <p>Returns: <code>{"frame":"&lt;base64 JPEG&gt;","state":{...},"reward":0.0}</code></p>
+
+  <h3>GET /api/game/{id}/state</h3>
+  <p>Get current game state without advancing a tick.</p>
+
+  <h3>POST /api/game/{id}/reset</h3>
+  <p>Reset the episode. Optionally pass <code>{"scenario":"..."}</code> to change map.</p>
+
+  <h3>DELETE /api/game/{id}</h3>
+  <p>Destroy the session and free resources.</p>
+
+  <h3>GET /api/game/scenarios</h3>
+  <p>List available scenario config files.</p>
+
+  <h3>Action Vector</h3>
+  <p>18 elements:</p>
+  <pre>[FORWARD, BACKWARD, LEFT, RIGHT, TURN_L, TURN_R, ATTACK, USE, JUMP,
+ TURN_DELTA, LOOK_DELTA,
+ WEAPON1, WEAPON2, WEAPON3, WEAPON4, WEAPON5, WEAPON6, WEAPON7]</pre>
+  <p>Buttons (indices 0-8, 11-17) are binary (0 or 1). Deltas (indices 9-10) are float values.</p>
 </section>
 
-<!-- FAQ Section -->
 <section id="faq">
   <h2>Troubleshooting / FAQ</h2>
 
   <details>
-    <summary>Common question 1?</summary>
-    <p>Answer to common question 1 with helpful details.</p>
+    <summary>The game screen is black / not rendering</summary>
+    <p>Make sure the Python server is running (<code>python3 server.py</code>) and that the WebSocket connection succeeds. Check the browser console for errors.</p>
   </details>
 
   <details>
-    <summary>Common question 2?</summary>
-    <p>Answer to common question 2 with helpful details.</p>
+    <summary>Mouse look is not working</summary>
+    <p>You must click the game canvas first to activate Pointer Lock. Some browsers may block Pointer Lock if the page is not focused.</p>
   </details>
 
   <details>
-    <summary>Common question 3?</summary>
-    <p>Answer to common question 3 with helpful details.</p>
+    <summary>How do I change the game scenario?</summary>
+    <p>Click the <strong>Menu</strong> button in the header to return to the level select screen.</p>
   </details>
 
   <details>
-    <summary>How do I add images to the help?</summary>
-    <p>Place image files in the <code>help/img/</code> directory and reference them with relative paths like <code>&lt;img src="./img/example.png" alt="Description"&gt;</code></p>
+    <summary>Can I run multiple AI agents at once?</summary>
+    <p>Yes. Each <code>POST /api/game/start</code> creates an independent session with its own ViZDoom instance. You can run as many as server resources allow.</p>
   </details>
 
   <details>
-    <summary>Is my work automatically saved?</summary>
-    <p>Yes, the app saves your work automatically in the background.</p>
+    <summary>Is audio supported?</summary>
+    <p>Audio is streamed when available. It requires ViZDoom to be built with sound support (OpenAL). On Linux this is typically included; on macOS the pip wheel may not include it. Audio is automatically enabled when you start a level.</p>
   </details>
 </section>
-
-<!--
-  Additional sections you can add as needed:
-
-  <section id="advanced">
-    <h2>Advanced Features</h2>
-    <p>Advanced usage information...</p>
-  </section>
-
-  <section id="troubleshooting">
-    <h2>Troubleshooting</h2>
-    <p>Common issues and solutions...</p>
-  </section>
-
-  <section id="api">
-    <h2>API Reference</h2>
-    <p>Technical API documentation...</p>
-  </section>
--->

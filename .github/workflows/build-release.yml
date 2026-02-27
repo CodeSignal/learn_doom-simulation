@@ -17,26 +17,30 @@ jobs:
 
       - name: Populate design system submodule
         run: git submodule update --init
-        
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '22.13.1'
           cache: 'npm'
 
-      - name: Install all dependencies
+      - name: Install Node dependencies
         run: npm ci
 
-      - name: Build project
+      - name: Build client
         run: npm run build
-
-      - name: Install production dependencies only
-        run: |
-          npm ci --production
 
       - name: Create release tarball
         run: |
-          tar -czf release.tar.gz dist/ package.json server.js node_modules/
+          tar -czf release.tar.gz dist/ server.py game_manager.py requirements.txt package.json
 
       - name: Upload build artifact (for workflow logs)
         uses: actions/upload-artifact@v4

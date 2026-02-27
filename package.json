@@ -1,28 +1,26 @@
 {
-  "name": "bespoke-template",
-  "version": "0.0.2",
-  "description": "Bespoke template with local development server and WebSocket messaging",
-  "main": "server.js",
+  "name": "doom-simulation",
+  "version": "0.0.1",
+  "description": "Web-playable Doom via ViZDoom with browser streaming and REST API",
+  "main": "server.py",
   "scripts": {
     "start": "npm run start:prod",
-    "start:prod": "IS_PRODUCTION=true node server.js",
+    "start:prod": "IS_PRODUCTION=true python3 server.py",
     "start:dev": "concurrently \"npm run dev:vite\" \"npm run dev:api\"",
     "dev:vite": "vite",
-    "dev:api": "PORT=3001 node server.js",
+    "dev:api": "PORT=3001 python3 server.py",
     "build": "vite build"
   },
   "keywords": [
-    "bespoke",
-    "template",
-    "development",
-    "server",
-    "websocket"
+    "doom",
+    "vizdoom",
+    "reinforcement-learning",
+    "websocket",
+    "game"
   ],
   "author": "",
   "license": "MIT",
-  "dependencies": {
-    "ws": "^8.14.2"
-  },
+  "dependencies": {},
   "devDependencies": {
     "concurrently": "^8.2.2",
     "vite": "^7.2.4"
